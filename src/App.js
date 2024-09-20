@@ -5,7 +5,7 @@ import Game from './components/Game';
 function App() {
   return (
     <div className="App">
-      <h1>Надо кликать на кнопку, чтобы бросить кубик</h1>
+      <h1>Надо кликать на "бросить кубик", чтобы бросить кубик</h1>
       <Game />
     </div>
   );

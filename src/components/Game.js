@@ -74,9 +74,30 @@ const Game = () => {
             let diceSprite = scene.add.sprite(400, 100, 'dice1').setVisible(true).setScale(0.25);
             console.log('Dice sprite created');
 
+
+            /*
+            // Create a message text for "Not your turn yet!"
+            let notYourTurnText = scene.add.text(500, 500, 'Подожди свой ход, пожалуйста!', { fill: '#ff0000', fontSize: '24px' });
+            notYourTurnText.setVisible(false); // Initially hide it */
+
             // Attempt to join the room
             client.joinOrCreate('game_room').then((joinedRoom) => {
                 room = joinedRoom;
+
+
+                /*
+                // Listen for the "newTurn" message
+                room.onMessage("newTurn", (data) => {
+                    const currentTurn = data.sessionId;
+
+                    if (currentTurn === room.sessionId) {
+                        console.log("It's your turn!");
+                        rollDiceButton.setVisible(true);
+                    } else {
+                        console.log(`It's ${currentTurn}'s turn.`);
+                        rollDiceButton.setVisible(false);
+                    }
+                });  */
                 console.log('Joined room:', room);
                 room.onMessage("diceRolled", (data) => {
                     console.log(`Player ${data.sessionId} rolled a ${data.diceValue} and moved to position ${data.position}`);
@@ -90,8 +111,8 @@ const Game = () => {
                         // Get the current t value (position on the path)
                         const fromPosition = playerSprite.t; // This should be between 0 and 1
 
-                        // Ensure the path is set
-                        playerSprite.setPath(path); // Set the path for the player sprite
+                        // Ensure the path is set (IT WAS ALREADY SET)
+                        //playerSprite.setPath(path); // Set the path for the player sprite
 
                         console.log(`Current t value before moving: ${fromPosition}`);
 
@@ -179,8 +200,28 @@ const Game = () => {
                     }
                 }
 
-
-                // Create the "Roll Dice" button and position it
+                /*
+                                // Create the "Roll Dice" button and position it
+                                let rollDiceButton = scene.add.text(300, 450, 'Бросить Кубик', { fill: '#fff', fontSize: '18px' })
+                                    .setInteractive()
+                                    .on('pointerdown', () => {
+                                        if (room.state.currentTurn === room.sessionId) {
+                                            rollDice(scene);
+                                        } else {
+                                            // Show "Not your turn" message
+                                            notYourTurnText.setVisible(true);
+                
+                
+                                            scene.time.delayedCall(3000, () => {
+                                                notYourTurnText.setVisible(false);
+                                            });
+                                        }
+                                    });
+                            }).catch((err) => {
+                                console.error('Error joining room:', err);
+                            });
+                        }
+                */ // Create the "Roll Dice" button and position it
                 let rollDiceButton = scene.add.text(300, 450, 'Бросить Кубик', { fill: '#fff', fontSize: '18px' })
                     .setInteractive()
                     .on('pointerdown', () => rollDice(scene));
@@ -188,7 +229,6 @@ const Game = () => {
                 console.error('Error joining room:', err);
             });
         }
-
 
 
 
