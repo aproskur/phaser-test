@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Phaser from 'phaser';
 import { Client } from 'colyseus.js';
 import Player from '../schemas/Player'; // Import Player schema
@@ -12,9 +12,13 @@ import dice3 from '../assets/3_dots.png';
 import dice4 from '../assets/4_dots.png';
 import dice5 from '../assets/5_dots.png';
 import dice6 from '../assets/6_dots.png';
+import booImage from '../assets/boo.png';
 import beeImage from '../assets/1.png';
-
+import carrotImage from '../assets/carrot.png';
 const Game = () => {
+
+    const [playerAvatar, setPlayerAvatar] = useState(null);
+
     useEffect(() => {
         const client = new Client('ws://localhost:2567'); // Connect to Colyseus server
         let room;
@@ -39,6 +43,8 @@ const Game = () => {
             this.load.image('player', playerImage);
             this.load.image('sprite1', playerImage);
             this.load.image('sprite2', beeImage);
+            this.load.image('sprite3', booImage);
+            this.load.image('sprite4', carrotImage)
             this.load.image('dice1', dice1);
             this.load.image('dice2', dice2);
             this.load.image('dice3', dice3);
@@ -116,6 +122,8 @@ const Game = () => {
 
                         console.log(`Current t value before moving: ${fromPosition}`);
 
+                        rollDiceButton.disableInteractive();
+
                         // Start following the path
                         playerSprite.startFollow({
                             duration: data.diceValue * 1000, // Duration based on dice value
@@ -126,6 +134,7 @@ const Game = () => {
                             onComplete: () => {
                                 console.log(`Player ${data.sessionId} finished moving to position ${newPosition}`);
                                 playerSprite.t = newPosition; // Update the t value to the new position
+                                rollDiceButton.setInteractive();
                             }
                         });
                     } else {
@@ -247,6 +256,11 @@ const Game = () => {
             // Store the sprite reference for future updates
             players[sessionId] = playerSprite;
             console.log(`Sprite created for player ${sessionId} at (${player.x}, ${player.y})`);
+
+            // If this is the current player, set the avatar in the React state
+            if (sessionId === room.sessionId) {
+                setPlayerAvatar(spriteKey); // Update avatar when player sprite is created
+            }
         }
 
         function update() {
@@ -261,7 +275,31 @@ const Game = () => {
         };
     }, []);
 
-    return <div id="phaser-game" style={{ width: '800px', height: '500px' }} />;
+    return (
+        <div>
+            {/* Phaser Game */}
+            <div id="phaser-game" style={{ width: '800px', height: '500px' }} />
+
+            {/* Avatar Display */}
+            {playerAvatar && (
+                <div style={{ position: 'absolute', top: '10px', right: '10px', border: '1px solid #fff', padding: '10px', backgroundColor: '#000' }}>
+                    <p style={{ color: '#fff' }}>Это ты:</p>
+                    <img
+                        src={
+                            playerAvatar === 'sprite1'
+                                ? playerImage
+                                : playerAvatar === 'sprite2'
+                                    ? beeImage
+                                    : playerAvatar === 'sprite3'
+                                        ? booImage
+                                        : carrotImage
+                        }
+                        alt="Player Avatar"
+                        width="50"
+                    />             </div>
+            )}
+        </div>
+    );
 };
 
 export default Game;
