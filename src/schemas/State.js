@@ -1,7 +1,7 @@
 import { Schema, defineTypes, MapSchema } from '@colyseus/schema';
 import Player from './Player'; // Import Player schema
 
-// Define the State schema
+// Define the State schema. Seems unnecessary for JS
 class State extends Schema {
     constructor() {
         super();

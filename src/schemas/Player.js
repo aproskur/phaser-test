@@ -1,6 +1,6 @@
 import { Schema, defineTypes } from '@colyseus/schema';
 
-// Define the Player schema
+// Define the Player schema. Seems unnecessary for JS
 class Player extends Schema {
     constructor() {
         super();
